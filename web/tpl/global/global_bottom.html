@@ -1,0 +1,64 @@
+
+<!-- pop msg div -->
+<a id="popup-message-div" href="#pop-msg-div">
+  <div class="genRowEmpty" id="popMsgDiv"></div>
+</a>
+
+<!-- pop user setup div -->
+<a id="popup-setup-div" href="#pop-setup-div">
+  <div class="genRowEmpty" id="popSetupDiv"></div>
+</a>
+
+<!-- page bottom -->
+<div class="wholeDiv">
+ <div class="genRow">
+   <div class="centerDiv">
+	 
+  <div class="textRectOfGray">
+   <!-- icp info -->
+    京ICP备20017190号-2
+    <a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=11010602201357">
+    <span style="display:inline-block;text-decoration:none;">京公网安备11010602201357号</span></a>
+  </div>
+
+   </div>
+ </div>
+</div>
+</html>
+
+<script type="text/javascript">
+//setup notify address
+//var notifyAddr = "{{.NotifyAddr}}";
+//var cookiePlayerInfo = "{{.CookiePlayerInfo}}";
+
+//ready
+$(function(){
+  //jump to browser url
+  pageJump("{{.BrowserOrgUri}}");
+
+  //detect browser goback or forward opt
+  $(window).on('popstate', function(event) {
+    var href = window.location.href;
+    console.log("popstate, href:"+href);
+    if(typeof(href) != "undefined" && href != "") {
+      //check and force close websocket
+      forceCloseSnake();
+      //forceCloseBrawl();
+      
+      //send ajax page load
+      pageJump(href);
+    }
+  });
+
+  document.addEventListener("selectstart", function (event) {
+      event.preventDefault();  // 阻止系统选中文本
+  });
+
+  document.addEventListener("dblclick", function (event) {
+      event.preventDefault();  // 阻止鼠标左键双击全选
+  });
+
+  //init notify ws
+  //initNotify(notifyAddr, cookiePlayerInfo);
+});
+</script>

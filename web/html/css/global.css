@@ -1,0 +1,44 @@
+body {
+    padding: 0;
+    margin:0;
+    height: 100%;
+    user-select: none;
+}
+
+html {
+    padding:0;
+    margin:0;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    color: #404f3f;
+    height: 100%;
+    touch-action: none; /* 禁止所有触摸滚动和缩放 */
+}
+
+/* 禁止长按弹出系统菜单（适用于 iOS/Android） */
+html, body, canvas {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.bigBordRect {
+  min-width: 130px;
+  min-height: 30px;
+  width: auto;
+  height: auto;
+  cursor:pointer;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  padding-top: 5px;
+  margin-right: 10px;
+  border-radius:20px;
+  border: solid 1px #EAEAEA;
+  background-color: #FF8C00;
+}
+
+div.bigBordRect:hover{
+    color: white;
+    background-color: #FF4500;
+}

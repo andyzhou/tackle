@@ -1,0 +1,115 @@
+<style>
+    body { font-family: Arial; padding: 20px; }
+    video { display: block; margin-top: 15px; }
+    #videoContainer {
+        width: 480px;
+    }
+    .slider { width: 100%; margin: 10px 0; }
+</style>
+
+<!--post form-->
+<h2>视频转GIF工具 Demo</h2>
+
+<input type="file" id="upload" accept="video/*"><br><br>
+
+<div id="videoContainer">
+    <!-- origin video -->
+    <video id="preview" width="480px" controls></video>
+
+    <p id="duration">
+        视频时长: 0 秒
+    </p>
+    <div>
+        <label>开始时间: <span id="startTime">0</span>s</label><br>
+        <input type="range" id="startSlider" class="slider" min="0" value="0">
+    </div>
+    <div>
+        <label>结束时间: <span id="endTime">0</span>s</label><br>
+        <input type="range" id="endSlider" class="slider" min="0" value="0">
+    </div>
+</div>
+
+<button id="submit">确认选择片段</button>
+
+<script>
+    let videoElement = $("#preview")[0];
+    let duration = 0;
+    let start = 0;
+    let end = 0;
+    let maxSeconds = 10; //xx seconds
+
+    // 上传并预览视频
+    $("#upload").on("change", function(e) {
+        let file = e.target.files[0];
+        if (file) {
+            let url = URL.createObjectURL(file);
+            $("#preview").attr("src", url);
+
+            videoElement.onloadedmetadata = function() {
+                duration = videoElement.duration;
+                $("#duration").text("视频时长: " + duration.toFixed(2) + " 秒");
+
+                $("#startSlider, #endSlider").attr("max", Math.floor(duration));
+                $("#startSlider").val(0);
+                $("#endSlider").val(Math.floor(duration));
+                $("#startTime").text(0);
+                $("#endTime").text(Math.floor(duration));
+
+                start = 0;
+                end = Math.floor(duration);
+            };
+        }
+    });
+
+    // 开始滑块
+    $("#startSlider").on("input", function() {
+        start = parseInt($(this).val());
+
+        // 自动计算结束时间
+        if (start + maxSeconds <= duration) {
+            end = start + maxSeconds;
+        } else {
+            end = duration; // 视频末尾
+        }
+
+        // 更新滑块显示
+        $("#startTime").text(start);
+        $("#endTime").text(end);
+        $("#endSlider").val(end);
+
+        // 视频跳到起点
+        videoElement.currentTime = start;
+    });
+
+    // 结束滑块
+    $("#endSlider").on("input", function() {
+        end = parseInt($(this).val());
+        $("#endTime").text(end);
+        if (end <= start) {
+            start = end - 1;
+            $("#startSlider").val(start);
+            $("#startTime").text(start);
+        }
+    });
+
+    // 播放控制：只播放选定区间
+    videoElement.addEventListener("timeupdate", function() {
+        if (videoElement.currentTime < start) {
+            videoElement.currentTime = start;
+        }
+        if (videoElement.currentTime >= end) {
+            videoElement.pause();
+            videoElement.currentTime = start; // 重置到开始时间
+        }
+    });
+
+    // 点击提交
+    $("#submit").on("click", function() {
+        let length = end - start;
+        if (length > 10) {
+            alert("片段超过 10 秒，将自动裁剪为 10 秒以内");
+            end = start + 10;
+        }
+        alert("选择的片段: " + start + "s ~ " + end + "s (时长: " + (end - start) + "s)");
+    });
+</script>
