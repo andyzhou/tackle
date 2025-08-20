@@ -55,28 +55,11 @@ func InitWebService(c *cli.Context) error {
 	//init static path
 	WebGin.Static(define.UriOfHtml, webPath)
 
-	//register request entry
-	//like:  /[app]/[module]/[dataId]
-	webSubGroupUrl := fmt.Sprintf("/:%v",
-		define.ParaOfSubApp,
-	)
-	webSubModuleUrl := fmt.Sprintf("/:%v/:%v",
-		define.ParaOfSubApp,
-		define.ParaOfSubModule,
-	)
-	webSubDataIdUrl := fmt.Sprintf("/:%v/:%v/:%v",
-		define.ParaOfSubApp,
-		define.ParaOfSubModule,
-		define.ParaOfSubDataId,
-	)
+	//init web page entry
+	app.NewWebPageEntry(WebGin)
 
-	//init web entry
-	//for web dynamic page
-	webPage := app.NewWebPageEntry(WebGin)
-	WebGin.Any(define.UriOfRoot, webPage.Entry)
-	WebGin.Any(webSubGroupUrl, webPage.Entry)
-	WebGin.Any(webSubModuleUrl, webPage.Entry)
-	WebGin.Any(webSubDataIdUrl, webPage.Entry)
+	//init web api entry
+	app.NewApiEntry(WebGin)
 
 	//start web service
 	fmt.Printf("start web service http://localhost:%v\n", webPort)

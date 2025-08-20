@@ -9,6 +9,7 @@ import (
 	"github.com/andyzhou/tackle/conf"
 	"github.com/andyzhou/tackle/define"
 	"github.com/andyzhou/tackle/json"
+	"github.com/andyzhou/tinylib/web"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"log"
@@ -18,6 +19,39 @@ import (
 
 //face info
 type BaseEntry struct {
+	web.Base
+}
+
+//check refer domain
+func (f *BaseEntry) CheckReferDomain(ctx *gin.Context) bool {
+	//check switcher
+	mainConf := conf.RunAppConfig.GetMainConf().GetConfInfo()
+	referDomainAllow := mainConf.ReferDomain
+	if len(referDomainAllow) <= 0 {
+		//not need check refer domain
+		return true
+	}
+
+	//get and check refer
+	domainAllowed := false
+	referUri := f.GetRefer(ctx)
+	if referUri != "" {
+		referDomain := f.GetReferDomain(referUri)
+		if referDomain != "" {
+			for _, domain := range referDomainAllow {
+				if domain == referDomain {
+					domainAllowed = true
+					break
+				}
+			}
+		}
+	}
+	return domainAllowed
+}
+
+//get refer
+func (f *BaseEntry) GetRefer(ctx *gin.Context) string {
+	return ctx.GetHeader("Referer")
 }
 
 //init tpl obj

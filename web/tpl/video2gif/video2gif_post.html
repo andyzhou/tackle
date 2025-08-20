@@ -7,10 +7,12 @@
     .slider { width: 100%; margin: 10px 0; }
 </style>
 
-<!--post form-->
 <h2>视频转GIF工具 Demo</h2>
 
-<input type="file" id="upload" accept="video/*"><br><br>
+<!--post form-->
+<form enctype="multipart/form-data" method="post">
+<input type="button" class="fileUploader" id="uploadFile" name="uploadFile" value="选择视频文件"/>
+<input type="file" name="upload" id="upload" accept="video/*" style="display:none;" />
 
 <div id="videoContainer">
     <!-- origin video -->
@@ -29,7 +31,8 @@
     </div>
 </div>
 
-<button id="submit">确认选择片段</button>
+<button type="button" id="submitBtn">确认选择片段</button>
+</form>
 
 <script>
     let videoElement = $("#preview")[0];
@@ -37,6 +40,16 @@
     let start = 0;
     let end = 0;
     let maxSeconds = 10; //xx seconds
+
+    //ready
+    $(function() {
+      //upload file click opt
+      $("#uploadFile").click(function() {
+        //$("#uploadFile").val("视频文件");
+        $("#upload").click();
+        return
+      });
+    });
 
     // 上传并预览视频
     $("#upload").on("change", function(e) {
@@ -104,12 +117,25 @@
     });
 
     // 点击提交
-    $("#submit").on("click", function() {
+    $("#submitBtn").on("click", function(e) {
+        //阻止表单提交刷新
+        e.preventDefault();
+
         let length = end - start;
-        if (length > 10) {
-            alert("片段超过 10 秒，将自动裁剪为 10 秒以内");
-            end = start + 10;
+        if (length > maxSeconds) {
+            alert(`片段超过 `+maxSeconds+` 秒，将自动裁剪为 `+maxSeconds+` 秒以内`);
+            end = start + maxSeconds;
         }
-        alert("选择的片段: " + start + "s ~ " + end + "s (时长: " + (end - start) + "s)");
+        //alert("选择的片段: " + start + "s ~ " + end + "s (时长: " + (end - start) + "s)");
+
+        //setup para
+        var paraMap = {
+            "fileId":"upload",
+            "startTime":start,
+            "submitBtn":"submitBtn",
+        };
+
+        //save uploaded video
+        video2gifUploadVideo(paraMap);
     });
 </script>

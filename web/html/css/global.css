@@ -42,3 +42,14 @@ div.bigBordRect:hover{
     color: white;
     background-color: #FF4500;
 }
+
+
+.fileUploader {
+    min-width: 130px;
+    width: auto;
+    height: 32px;
+    cursor: pointer;
+    padding: 3px 3px 3px 3px;
+    border: solid 1px #efefef;
+    border-radius: 20px;
+}

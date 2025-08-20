@@ -11,12 +11,18 @@ import (
 
 //main config info
 type mainConfInfo struct {
-	AppRoot        string `json:"appRoot"`
-	TplPath        string `json:"tplPath"`
-	HtmlPath       string `json:"htmlPath"`
-	StoragePath    string `json:"storagePath"`
-	CookieName     string `json:"cookieName"`
-	CookieSecurity string `json:"cookieSecurity"`
+	AppRoot        string   `json:"appRoot"`
+	TplPath        string   `json:"tplPath"`
+	HtmlPath       string   `json:"htmlPath"`
+	PrivatePath    string   `json:"privatePath"`
+	TempPath       string   `json:"tempPath"`
+	CommandPath    string   `json:"commandPath"`
+	SnapFps        int      `json:"snapFps"`
+	SnapWidth      int      `json:"snapWidth"`
+	AnimateScale   int      `json:"animateScale"`
+	CookieName     string   `json:"cookieName"`
+	CookieSecurity string   `json:"cookieSecurity"`
+	ReferDomain    []string `json:"referDomain"`
 }
 type MainConf struct {
 	confInfo *mainConfInfo
@@ -27,7 +33,14 @@ type MainConf struct {
 func NewMainConf() *MainConf {
 	//self init
 	this := &MainConf{
-		confInfo: &mainConfInfo{},
+		confInfo: newMainConfInfo(),
+	}
+	return this
+}
+
+func newMainConfInfo() *mainConfInfo {
+	this := &mainConfInfo{
+		ReferDomain: []string{},
 	}
 	return this
 }

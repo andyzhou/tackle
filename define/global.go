@@ -9,6 +9,7 @@ const (
 	DefaultTimeOfSecond   = 1 //One second
 	DefaultDelaySeconds   = 2 //N seconds
 	DefaultHundredPercent = 100
+	DefaultPage			  = 1
 )
 
 const (

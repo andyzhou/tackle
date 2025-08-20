@@ -11,6 +11,7 @@ const (
 	SubFaceOfHome      = "home"
 	SubFaceOfList	   = "list"
 	SubFaceOfPost	   = "post"
+	SubFaceOfUpload    = "upload"
 )
 
 //sub tpl file

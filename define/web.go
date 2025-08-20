@@ -7,14 +7,15 @@ const (
 
 const (
 	UriOfRoot = "/"
+	UriOfApi  = "/api"
 	UriOfHtml = "/html" //for css/js/image files
 )
 
 //web request groups
 const (
-	WebReqAppOfHome  = "home"
+	WebReqAppOfHome      = "home"
 	WebReqAppOfVideo2gif = "video2gif" //video2gif
-	WebReqAppOfPdf   = "pdf" //pdf2html
+	WebReqAppOfPdf       = "pdf"       //pdf2html
 )
 
 const (

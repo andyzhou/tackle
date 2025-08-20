@@ -1,0 +1,103 @@
+syntax = "proto3";
+package search;
+option go_package = "pb";
+option java_package = "com.tc.tinySearch";
+
+///////////////////////
+//proto for common
+///////////////////////
+
+message TinySearchBase {
+    string token = 1;
+}
+
+///////////////////////
+//proto for doc sync
+///////////////////////
+
+//message for doc sync request
+message DocSyncReq {
+    string tag = 1;//index tag
+    string docId = 2;//doc id
+    bytes json = 3;//doc json byte
+}
+
+//message for doc remove request
+message DocRemoveReq {
+    string tag = 1;//index tag
+    repeated string docId = 2;//doc ids
+}
+
+//message for doc sync response
+message DocSyncResp {
+  bool success = 1;
+  string errMsg = 2;
+}
+
+///////////////////////
+//proto for doc query
+///////////////////////
+
+//message for doc get
+message DocGetReq {
+    string tag = 1; //index tag
+    repeated string docIds = 2; //doc id array
+    bool useQueue = 3; //set as true, will opt in queue
+}
+
+//message for doc get response
+message DocGetResp {
+    bool success = 1;
+    string errMsg = 2;
+    repeated bytes jsonByte = 3; //json obj byte array
+}
+
+//message for doc query request
+message DocQueryReq {
+    int32 kind = 1; //query kind
+    string tag = 2; //index tag
+    bytes json = 3; //query opt json byte
+}
+
+//message for doc query response
+message DocQueryResp {
+    bool success = 1;
+    string errMsg = 2;
+    bytes jsonByte = 3;//json obj byte
+}
+
+///////////////////////
+//proto for index
+///////////////////////
+
+//message for index create
+message IndexCreateReq {
+    string tag = 1; //index tag
+}
+
+//message for index create response
+message IndexCreateResp {
+     bool success = 1;
+     string errMsg = 2;
+}
+
+///////////////////////
+//define service
+///////////////////////
+service SearchService {
+    //doc query, include general query, agg, suggest, etc.
+    rpc DocQuery(DocQueryReq) returns (DocQueryResp);
+
+    //doc get
+    rpc DocGet(DocGetReq) returns(DocGetResp);
+
+    //doc remove
+    rpc DocRemove(DocRemoveReq) returns (DocSyncResp);
+
+    //doc sync
+    rpc DocSync(DocSyncReq) returns (DocSyncResp);
+
+    //index create
+    rpc IndexCreate(IndexCreateReq) returns (IndexCreateResp);
+}
+
