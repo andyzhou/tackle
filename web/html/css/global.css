@@ -259,6 +259,7 @@ div.bigBordRect:hover{
 
 
 .video2gifPostForm {
+  float: left;
   width: 100%;
   height: auto;
   margin: 10px 10px 10px 10px;
