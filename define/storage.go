@@ -14,6 +14,8 @@ const (
 //sqlite table names
 //for `video2gif`
 const (
+	TabNameOfVideo2GifIds     = `ids`
+	TabNameOfVideo2GifUsers   = `users`
 	TabNameOfVideo2GifFiles   = `files`
 	TabNameOfVideo2GifOptLogs = `fileOptLogs`
 )
@@ -28,4 +30,10 @@ const (
 //local file sub path
 const (
 	FilePathOfVideo2Gif = "file/video2gif"
+)
+
+
+//default ids
+const (
+	DefaultTableRecId = 0
 )

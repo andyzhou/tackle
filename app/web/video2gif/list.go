@@ -6,23 +6,25 @@ import (
 	"github.com/andyzhou/tackle/app/view"
 	"github.com/andyzhou/tackle/db"
 	"github.com/andyzhou/tackle/define"
+	"github.com/andyzhou/tackle/json"
 	"github.com/gin-gonic/gin"
 	"log"
+	"strconv"
 )
 
 /*
- * home page entry
+ * list page entry
  */
 
 //face info
-type HomeEntry struct {
+type ListEntry struct {
 	tpl *base.TplFace
 	base.BaseEntry
 }
 
 //construct
-func NewHomeEntry() *HomeEntry {
-	this := &HomeEntry{
+func NewListEntry() *ListEntry {
+	this := &ListEntry{
 		tpl: base.NewTplFace(),
 	}
 	this.interInit()
@@ -30,25 +32,31 @@ func NewHomeEntry() *HomeEntry {
 }
 
 //entry
-func (f *HomeEntry) Entry(
+func (f *ListEntry) Entry(
 	cookieInfo string,
 	userId int64,
 	ctx *gin.Context) (string, error) {
 	var (
-		pageView view.Video2GifHomePageView
+		pageView view.Video2GifListPageView
 	)
+
+	//get key para
+	page, _ := f.GetPara(define.ParaOfPageNo, ctx)
+	pageInt, _ := strconv.Atoi(page)
 
 	//setup page view
 	pageView.CookiePlayerInfo = cookieInfo
 	pageView.CookiePlayerId = userId
-	pageView.NoData = true
 
-	if userId > 0 {
-		//check db record
-		video2gifDB := db.GetInterDB().GetVideo2GifDB()
-		records, _ := video2gifDB.GetFiles(userId, 1, 1)
-		if len(records) > 0 {
-			pageView.NoData = false
+	//get batch file info
+	video2gifDB := db.GetInterDB().GetVideo2GifDB()
+	filesJson, _ := video2gifDB.GetFiles(userId, pageInt, define.RecSmallPage)
+
+	pageView.FilesInfo = make([]*json.Video2GifFileJson, 0)
+	if filesJson != nil {
+		pageView.FilesInfo = filesJson
+		if len(filesJson) > 0 {
+			pageView.ListMoreSwitcher = true
 		}
 	}
 
@@ -56,9 +64,9 @@ func (f *HomeEntry) Entry(
 	tplDataMap, _ := f.EncodeJsonObj2Map(pageView)
 
 	//parse tpl
-	mainTpl, subErr := f.tpl.ParseTpl(wDefine.TplOfVideo2GifHome)
+	mainTpl, subErr := f.tpl.ParseTpl(wDefine.TplOfVideo2GifList)
 	if subErr != nil {
-		log.Printf("page.home, err:%v\n", subErr.Error())
+		log.Printf("page.list, err:%v\n", subErr.Error())
 		return "", subErr
 	}
 
@@ -67,7 +75,7 @@ func (f *HomeEntry) Entry(
 }
 
 //inter init
-func (f *HomeEntry) interInit() {
+func (f *ListEntry) interInit() {
 	//init tpl obj
 	f.InitTplObj(f.tpl, define.WebReqAppOfVideo2gif)
 }

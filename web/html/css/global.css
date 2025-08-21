@@ -22,8 +22,114 @@ html, body, canvas {
     user-select: none;
 }
 
-.bigBordRect {
-  min-width: 130px;
+.whole_div {
+    width: 100%;
+    min-height:900px;
+    min-height: 100%;
+    height: auto;
+    clear: both;
+    text-align:center;
+    padding-top: 65px;
+    margin-bottom: 30px;
+}
+
+.genCenterRow {
+  width: 900px;
+  height: auto;
+  margin: auto;
+  padding: auto;
+  text-align: center;
+/*  background-color: yellow;*/
+}
+
+.genRow {
+  min-height: 21px;
+  height: auto;
+  width:auto;
+  margin-top: 2px;
+  padding-top:5px;
+  text-align: left;
+  clear: both;
+}
+
+.genCol {
+  width: auto;
+  height: auto;
+  display:inline-block;
+  vertical-align: top;
+  overflow-wrap: break-word;
+  word-wrap:break-word;
+  word-break:break-all;
+}
+
+/*stick nav header*/
+.stickPageHeader {
+    display:inline-block;
+    position: fixed;
+    width: 100%;
+    height: 60px;
+    clear: both;
+    z-index: 999;
+    text-align: center;
+    border-bottom: solid 1px #C1C1C1;
+    background-color: #efefef;
+}
+
+
+.tpl_logo {
+    float: left;
+    width: 160px;
+    height: 50px;
+    cursor: pointer;
+    text-align: center;
+    vertical-align: bottom;
+    margin: -2px 0px 5px 5px;
+    border-radius: 12px; /*#8B0000*/
+    background-color:#B03060;/*#8B0000;*/
+}
+
+.tpl_logo .logo {
+  width: 46px;
+  height: auto;
+  display:inline-block;
+  vertical-align: top;
+/*  background-color: yellow;*/
+}
+
+.tpl_logo .logo img {
+    width: 42px;
+    height: auto;
+    padding: 5px 5px 5px 5px;
+}
+
+.tpl_logo .txt {
+  width: 90px;
+  min-height: 43px;
+  height: auto;
+  margin-top: -3px;
+  text-align: left;
+  font-size: 15px;
+  font-weight: bold;
+  font-family: sans-serif;
+  display:inline-block;
+  vertical-align: bottom;
+  color: #ffffff;
+/*  text-shadow: 0px 1px #ffffff;*/
+}
+
+.betaFont {
+    font-size: 20px;
+    font-family: sans-serif;
+/*  color: #aeaeae;*/
+}
+
+.quickPost {
+    width: 200px;
+    padding:5px 0px 0px 100px;
+}
+
+.loadMoreButton {
+  min-width: 200px;
   min-height: 30px;
   width: auto;
   height: auto;
@@ -34,13 +140,35 @@ html, body, canvas {
   padding-top: 5px;
   margin-right: 10px;
   border-radius:20px;
-  border: solid 1px #EAEAEA;
-  background-color: #FF8C00;
+  border: solid 1px #efefef;
+  background-color: #efefef;
+}
+
+div.loadMoreButton:hover{
+    color: white;
+    background-color: #afafaf;
+}
+
+.bigBordRect {
+  min-width: 130px;
+  min-height: 30px;
+  width: auto;
+  height: auto;
+  cursor:pointer;
+  font-size: 16px;
+  font-weight: bold;
+  color: #a1a1a1;
+  text-align: center;
+  padding-top: 5px;
+  margint: 20px 10px 0px 0px;
+  border-radius:20px;
+  border: solid 1px #C1C1C1;
+  background-color: #efefef;
 }
 
 div.bigBordRect:hover{
-    color: white;
-    background-color: #FF4500;
+    color: black;
+    background-color: #C1C1C1;
 }
 
 
@@ -52,4 +180,86 @@ div.bigBordRect:hover{
     padding: 3px 3px 3px 3px;
     border: solid 1px #efefef;
     border-radius: 20px;
+}
+
+/*瀑布式*/
+.grid {
+    width: 100%;           /* 容器宽度 */
+    margin: 0 auto;
+}
+
+.grid-item {
+    margin-bottom: 5px;   /* 行间距 */
+    background: #fff;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 2px 2px rgba(0,0,0,0.1);
+}
+
+.grid-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* 圆形背景 + 三角形 */
+.play-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+}
+
+.play-btn::before {
+    content: "";
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid transparent;
+    border-left: 20px solid white; /* 白色三角形 */
+    margin-left: 4px; /* 调整三角形居中 */
+}
+
+
+.action-panel {
+  position: absolute;
+/*  top: 80%;*/
+  bottom: 10px;          /* 底部上移10px */
+  left: 50%;
+  transform: translate(-50%); /* 只水平居中 */
+  width: 80%;           /* 宽度拉伸到父容器的 90% */
+  display: none;          /* 默认隐藏 */
+  background: rgba(0,0,0,0.3);
+  color: #fff;
+  padding: 5px;
+  border-radius: 20px;
+  text-align: center;
+  z-index: 10;
+}
+
+.action-panel button {
+  margin: 5px;
+  padding: 5px 10px;
+  border: none;
+  background: #efefef;
+  color: #333;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+
+.video2gifPostForm {
+  width: 100%;
+  height: auto;
+  margin: 10px 10px 10px 10px;
 }

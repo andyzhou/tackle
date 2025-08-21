@@ -34,7 +34,7 @@ func (f *HomeEntry) Entry(
 	playerId int64,
 	ctx *gin.Context) (string, error) {
 	var (
-		pageView view.BaseView
+		pageView view.HomePageView
 	)
 
 	//setup page view

@@ -3,6 +3,7 @@ package json
 //json info
 type Video2GifFileJson struct {
 	ShortUrl  string `json:"shortUrl"`
+	UserId    int64  `-`
 	Md5       string `json:"md5"`
 	Snap      string `json:"snap"`
 	Gif       string `json:"gif"`

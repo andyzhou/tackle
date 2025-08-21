@@ -7,6 +7,7 @@ import (
 	"fmt"
 	wDefine "github.com/andyzhou/tackle/app/define"
 	"github.com/andyzhou/tackle/conf"
+	"github.com/andyzhou/tackle/db"
 	"github.com/andyzhou/tackle/define"
 	"github.com/andyzhou/tackle/json"
 	"github.com/andyzhou/tinylib/web"
@@ -130,43 +131,40 @@ func (f *BaseEntry) AjaxResp(
 	return respJson
 }
 
-//check or init player
-//return playerId, cookieOrg, error
-func (f *BaseEntry) CheckOrInitPlayer(
+//check or init user
+//return userId, cookieOrg, error
+func (f *BaseEntry) CheckOrInitUser(
 	cookie *Cookie,
 	ctx *gin.Context) (int64, string, error) {
 	var (
-		playerId int64
+		userId int64
 		err error
 	)
-	//get player cookie
+	//get user cookie
 	cookieOrg, cookieInfo := cookie.GetCookieOrg(ctx)
 	if cookieInfo != "" {
-		playerId, _ = strconv.ParseInt(cookieInfo, 10, 64)
-		return playerId, cookieOrg, nil
+		userId, _ = strconv.ParseInt(cookieInfo, 10, 64)
+		if userId > 0 {
+			return userId, cookieOrg, nil
+		}
 	}
 
-	////get relate data face
-	//idData := data.GetData().GetRedisData().GetId()
-	//playerData := data.GetData().GetRedisData().GetPlayer()
-	//
-	////init new player
-	//playerId, _ := idData.GenPlayerId()
-	//
-	////init player obj
-	//playerObj := json.NewPlayerJson()
-	//playerObj.Id = playerId
-	//playerObj.CreateAt = time.Now().Unix()
-	//
-	////save into redis
-	//err := playerData.SetPlayer(playerObj)
-	//if err != nil {
-	//	return 0, cookieOrg, err
-	//}
+	//get and init new user for default app
+	mainConf := conf.RunAppConfig.GetMainConf().GetConfInfo()
+	defaultApp := mainConf.DefaultApp
+	switch defaultApp {
+	case define.SubAppOfVideo2Gif:
+		{
+			//for video2gif
+			video2gifDB := db.GetInterDB().GetVideo2GifDB()
+			userId, err = video2gifDB.AddNewUser(f.GetClientIp(ctx))
+			break
+		}
+	}
 
-	//set player id into cookie
-	cookieOrg, err = cookie.SetCookie(fmt.Sprintf("%v", playerId), ctx)
-	return playerId, cookieOrg, err
+	//set user id into cookie
+	cookieOrg, err = cookie.SetCookie(fmt.Sprintf("%v", userId), ctx)
+	return userId, cookieOrg, err
 }
 
 //convert json to obj

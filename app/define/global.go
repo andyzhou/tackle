@@ -27,5 +27,6 @@ const (
 
 	//for video2gif page
 	TplOfVideo2GifHome = "video2gif_home.html"
+	TplOfVideo2GifList = "video2gif_list.html"
 	TplOfVideo2GifPost = "video2gif_post.html"
 )

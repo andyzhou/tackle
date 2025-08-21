@@ -19,10 +19,12 @@ type mainConfInfo struct {
 	CommandPath    string   `json:"commandPath"`
 	SnapFps        int      `json:"snapFps"`
 	SnapWidth      int      `json:"snapWidth"`
+	AnimateSeconds int      `json:"animateSeconds"`
 	AnimateScale   int      `json:"animateScale"`
 	CookieName     string   `json:"cookieName"`
 	CookieSecurity string   `json:"cookieSecurity"`
 	ReferDomain    []string `json:"referDomain"`
+	DefaultApp     string   `json:"defaultApp"`
 }
 type MainConf struct {
 	confInfo *mainConfInfo

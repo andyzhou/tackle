@@ -5,8 +5,10 @@ import (
 	"github.com/andyzhou/tackle/app/base"
 	wDefine "github.com/andyzhou/tackle/app/define"
 	"github.com/andyzhou/tackle/app/view"
+	"github.com/andyzhou/tackle/app/web/file"
 	"github.com/andyzhou/tackle/app/web/home"
 	"github.com/andyzhou/tackle/app/web/video2gif"
+	"github.com/andyzhou/tackle/conf"
 	"github.com/andyzhou/tackle/define"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -22,6 +24,7 @@ import (
 type MainEntry struct {
 	home *home.PageEntry
 	video2gif *video2gif.PageEntry
+	file *file.InterEntry
 	base.BaseEntry
 }
 
@@ -30,6 +33,7 @@ func NewMainEntry() *MainEntry {
 	this := &MainEntry{
 		home: home.NewPageEntry(),
 		video2gif: video2gif.NewPageEntry(),
+		file: file.NewInterEntry(),
 	}
 	return this
 }
@@ -39,7 +43,7 @@ func NewMainEntry() *MainEntry {
 //return pageContent, error
 func (f *MainEntry) Entry(
 	cookieInfo string,
-	playerId int64,
+	userId int64,
 	ctx *gin.Context) {
 	var (
 		dynamicPageContent string
@@ -47,7 +51,10 @@ func (f *MainEntry) Entry(
 	//get key path para
 	subApp := ctx.Param(define.ParaOfSubApp)
 	if subApp == "" {
-		subApp = define.WebReqAppOfHome
+		//get default app home
+		mainConf := conf.RunAppConfig.GetMainConf().GetConfInfo()
+		defaultApp := mainConf.DefaultApp
+		subApp = defaultApp
 	}
 
 	//get dynamic page para
@@ -60,13 +67,20 @@ func (f *MainEntry) Entry(
 	case define.WebReqAppOfVideo2gif:
 		{
 			//for video2gif
-			dynamicPageContent, _ = f.video2gif.Entry(cookieInfo, playerId, ctx)
+			dynamicPageContent, _ = f.video2gif.Entry(cookieInfo, userId, ctx)
 			break
+		}
+	case define.WebReqAppOfFile:
+		{
+			//for read file
+			//process and return
+			f.file.Entry(userId, ctx)
+			return
 		}
 	default:
 		{
 			//for general page app
-			dynamicPageContent, _ = f.home.Entry(cookieInfo, playerId, ctx)
+			dynamicPageContent, _ = f.home.Entry(cookieInfo, userId, ctx)
 		}
 	}
 
@@ -84,8 +98,12 @@ func (f *MainEntry) Entry(
 		//init page view
 		pageView := view.MainPageView{}
 		pageView.CookiePlayerInfo = cookieInfo
-		pageView.CookiePlayerId = playerId
+		pageView.CookiePlayerId = userId
 		pageView.BrowserOrgUri = browserReqUri
+
+		//get and set app header tpl
+		mainConf := conf.RunAppConfig.GetMainConf().GetConfInfo()
+		pageView.DefaultApp = mainConf.DefaultApp
 
 		//output global main page tpl
 		ctx.HTML(http.StatusOK, wDefine.TplOfGlobalMain, pageView)

@@ -1,0 +1,25 @@
+
+<!-- sub files -->
+{{range .FilesInfo}}
+<div class="grid-item">
+ <div class="imgBox" data-static="/file/video2gif/{{.shortUrl}}?uri={{.snap}}" data-gif="/file/video2gif/{{.shortUrl}}?uri={{.gif}}">
+    <img id="img_{{.shortUrl}}" src="/file/video2gif/{{.shortUrl}}?uri={{.snap}}">
+    <div class="play-btn"></div>
+    <div class="action-panel" shortUrl="{{.shortUrl}}" gif="{{.gif}}">
+      <!-- <button name="like">喜欢</button> -->
+      <button opt="download">下载</button>
+    </div>
+  </div>
+</div>
+{{end}}
+
+<script type="text/javascript">
+//ready
+$(function() {
+    //update load more status
+    video2gifListMoreDiv = {{.ListMoreSwitcher}};
+
+    //set loaded video2gif images
+    setLoadedVideo2Gif();
+});
+</script>

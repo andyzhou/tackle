@@ -33,11 +33,11 @@ func NewWebPageEntry(gin *gin.Engine) *WebPageEntry {
 
 //main entry
 func (f *WebPageEntry) Entry(ctx *gin.Context) {
-	//check or init player
-	playerId, cookieInfo, _ := f.CheckOrInitPlayer(f.cookie, ctx)
+	//check or init user
+	userId, cookieInfo, _ := f.CheckOrInitUser(f.cookie, ctx)
 
 	//call sub entry
-	f.webEntry.Entry(cookieInfo, playerId, ctx)
+	f.webEntry.Entry(cookieInfo, userId, ctx)
 }
 
 //inter init

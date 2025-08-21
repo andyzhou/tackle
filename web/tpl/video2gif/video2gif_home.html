@@ -1,0 +1,42 @@
+<!-- //main div -->
+{{if .NoData}}
+    <h3>目前还没有内容，请上传视频...</h3>
+{{else}}
+    <!-- first page list -->
+    <div id="filesList" class="grid">
+    </div>
+
+    <!-- load more -->
+    <div id="loadMoreBtn" class="loadMoreButton">更多...</div>
+{{end}}
+
+
+<script type="text/javascript">
+var filesListDivId = "filesList";
+
+//init macy instance
+var macyInstance = Macy({
+        container: '.grid',     // 容器选择器
+        trueOrder: false,       // false 自动按最短列排列
+        waitForImages: true,    // 等图片加载完成再布局
+        margin: 10,             // 列间距和行间距
+        columns: 3,             // 默认列数
+        breakAt: {              // 响应式列数
+          1200: 4,
+          940: 3,
+          520: 2,
+          400: 1
+        }
+    });
+
+//ready
+$(function() {
+    //load first page list
+    loadMoreVideo2Gif(filesListDivId, true);
+
+    //load more page list
+    $("#loadMoreBtn").on("click", function(e) {
+        loadMoreVideo2Gif(filesListDivId);
+    });
+});
+</script>

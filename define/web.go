@@ -16,6 +16,12 @@ const (
 	WebReqAppOfHome      = "home"
 	WebReqAppOfVideo2gif = "video2gif" //video2gif
 	WebReqAppOfPdf       = "pdf"       //pdf2html
+	WebReqAppOfFile 	 = "file"
+)
+
+//sub app
+const (
+	SubAppOfVideo2Gif = "video2gif"
 )
 
 const (
@@ -24,26 +30,13 @@ const (
 	ParaOfSubModule = "module"
 	ParaOfSubAct    = "act"
 	ParaOfSubDataId = "dataId"
+	ParaOfKind      = "kind"
 	ParaOfShortUri  = "uri"
-
-	ParaOfMode = "mode"
-	ParaOfPage = "page"
-
-	SubPathParaOfAct = "act"
-)
-
-// inter code, global, DO NOT change these sequence!!!
-const (
-	CodeOfSuccess = iota + 1000
-	CodeOfInvalidRequest
-	CodeOfInvalidAppAndToken
-	CodeOfInterError
-	CodeOfNoSuchData
-	CodeOfNoSuchPlayer
-	CodeOfPlayerNickExists
-	CodeOfGameHasExists
-	CodeOfDataSaveFailed
-	CodeOfDataOptFailed
-	CodeOfNeedLogin	//1010
-	CodeOfHasBadwords
+	ParaOfFile      = "file"
+	ParaOfMode      = "mode"
+	ParaOfPage      = "page"
+	ParaOfPageNo    = "pageNo"
+	ParaOfSnap      = "snap"
+	ParaOfGif       = "gif"
+	ParaOfDownload  = "download"
 )

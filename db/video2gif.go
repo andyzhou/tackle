@@ -35,13 +35,42 @@ func (f *Video2Gif) Quit() {
 	}
 }
 
+////////////////////////
+//////api for users/////
+////////////////////////
+
+//add new user
+//return newUserId, error
+func (f *Video2Gif) AddNewUser(ip string) (int64, error) {
+	//format sql
+	sql := fmt.Sprintf("INSERT INTO %v(ip, createAt) " +
+		"VALUES(?, ?)", define.TabNameOfVideo2GifUsers)
+	now := time.Now().Unix()
+	values := []interface{}{
+		ip,
+		now,
+	}
+
+	//save into db
+	newUserId, _, err := f.db.Execute(sql, values)
+	return newUserId, err
+}
+
+////////////////////////
+//////api for files/////
+////////////////////////
 //get batch files
 func (f *Video2Gif) GetFiles(
+	userId int64,
 	page, pageSize int,
 	sortFields ...string) ([]*json.Video2GifFileJson, error) {
 	var (
 		sortField string
 	)
+	//check
+	if userId <= 0 {
+		return nil, errors.New("invalid user id")
+	}
 	if len(sortFields) > 0 {
 		sortField = sortFields[0]
 	}
@@ -59,8 +88,8 @@ func (f *Video2Gif) GetFiles(
 	}
 
 	//format sql
-	sql := fmt.Sprintf("SELECT * FROM %s ORDER BY %s desc LIMIT ?, ?",
-		define.TabNameOfVideo2GifFiles, sortField)
+	sql := fmt.Sprintf("SELECT * FROM %s WHERE userId= %v ORDER BY %s desc LIMIT ?, ?",
+		define.TabNameOfVideo2GifFiles, userId, sortField)
 	values := make([]interface{}, 0)
 	values = append(
 		values,
@@ -91,6 +120,7 @@ func (f *Video2Gif) GetFiles(
 
 //get file by short url
 func (f *Video2Gif) GetFile(
+	userId int64,
 	shortUrl string) (*json.Video2GifFileJson, error) {
 	//check
 	if shortUrl == "" {
@@ -98,8 +128,8 @@ func (f *Video2Gif) GetFile(
 	}
 
 	//format sql
-	sql := fmt.Sprintf("SELECT * FROM %s WHERE shortUrl = ? LIMIT 1",
-		define.TabNameOfVideo2GifFiles)
+	sql := fmt.Sprintf("SELECT * FROM %s WHERE userId = %v AND shortUrl = ? LIMIT 1",
+		define.TabNameOfVideo2GifFiles, userId)
 	values := []interface{}{
 		shortUrl,
 	}
@@ -117,6 +147,7 @@ func (f *Video2Gif) GetFile(
 
 //get file by md5
 func (f *Video2Gif) GetFileByMd5(
+	userId int64,
 	md5 string) (*json.Video2GifFileJson, error) {
 	//check
 	if md5 == "" {
@@ -124,8 +155,8 @@ func (f *Video2Gif) GetFileByMd5(
 	}
 
 	//format sql
-	sql := fmt.Sprintf("SELECT * FROM %s WHERE md5 = ? LIMIT 1",
-		define.TabNameOfVideo2GifFiles)
+	sql := fmt.Sprintf("SELECT * FROM %s WHERE userId = %v AND md5 = ? LIMIT 1",
+		define.TabNameOfVideo2GifFiles, userId)
 	values := []interface{}{
 		md5,
 	}
@@ -150,11 +181,12 @@ func (f *Video2Gif) AddFile(
 	}
 
 	//format sql
-	sql := fmt.Sprintf("INSERT INTO %v(shortUrl, md5, snap, gif, tags, createAt) " +
-		"VALUES(?, ?, ?, ?, ?, ?)", define.TabNameOfVideo2GifFiles)
+	sql := fmt.Sprintf("INSERT INTO %v(shortUrl, userId, md5, snap, gif, tags, createAt) " +
+		"VALUES(?, ?, ?, ?, ?, ?, ?)", define.TabNameOfVideo2GifFiles)
 	now := time.Now().Unix()
 	values := []interface{}{
 		obj.ShortUrl,
+		obj.UserId,
 		obj.Md5,
 		obj.Snap,
 		obj.Gif,
@@ -169,7 +201,7 @@ func (f *Video2Gif) AddFile(
 
 //analyze one file info
 func (f *Video2Gif) analyzeOneFileInfo(
-	record map[string]string) *json.Video2GifFileJson {
+	record map[string]interface{}) *json.Video2GifFileJson {
 	if record == nil {
 		return nil
 	}

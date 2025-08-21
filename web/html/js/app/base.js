@@ -19,6 +19,46 @@ var errCodeOfHasBadwords = 1011;
 //for tip message
 var tipMessageTimeOut = 5000; //xx micro seconds
 
+
+//general download file
+async function downloadFile(url) {
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            // 如果需要携带 Cookie，加入下面这一行
+            // credentials: 'include'
+        });
+
+        if (!response.ok) throw new Error('下载失败');
+
+        // 获取文件名：尝试从 Content-Disposition 头获取
+        let filename = 'download';
+        const disposition = response.headers.get('Content-Disposition');
+        if (disposition && disposition.includes('filename=')) {
+            const match = disposition.match(/filename\*?=(?:UTF-8'')?["']?([^;"']+)/i);
+            if (match && match[1]) filename = decodeURIComponent(match[1]);
+        }
+
+        const blob = await response.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+
+        // 创建隐藏 a 标签触发下载
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        // 释放 URL 对象
+        window.URL.revokeObjectURL(blobUrl);
+
+    } catch (err) {
+        console.error('下载失败:', err);
+    }
+}
+
+
 //count down trigger
 function countDownTrigger(countDiv, maxSeconds) {
     //check
@@ -480,7 +520,7 @@ function sendAjaxReqWithCB(reqUrl, data, cbFunc, cbPara) {
 //ajax page content and fill target div
 //cbFunc called after got page response
 //if isGoBack, maybe need hit cache for user expression
-function sendAjaxPageReq(reqUrl, fillDivId, paraMap, cbFunc, isGoBack) {
+function sendAjaxPageReq(reqUrl, fillDivId, paraMap, cbFunc, isAppend) {
     //input check
     if(typeof(reqUrl) == "undefined" || reqUrl == "") {
         return
@@ -488,13 +528,13 @@ function sendAjaxPageReq(reqUrl, fillDivId, paraMap, cbFunc, isGoBack) {
     if(typeof(fillDivId) == "undefined" || fillDivId == "") {
         return
     }
-    if(typeof(isGoBack) == "undefined" || isGoBack == null) {
-        isGoBack = false;
+    if(typeof(isAppend) == "undefined" || isAppend == null) {
+        isAppend = false;
     }
 
     //unbind scoll, this is important!!!
     //$(window).unbind("scroll");
-    //console.log("sendAjaxPageReq, reqUrl:"+reqUrl);
+    console.log("sendAjaxPageReq, reqUrl:"+reqUrl);
 
     //send ajax request to fetch page
     $.ajax({
@@ -519,10 +559,14 @@ function sendAjaxPageReq(reqUrl, fillDivId, paraMap, cbFunc, isGoBack) {
             //console.log('sendAjaxPageReq, reqUrl:'+reqUrl+', fillDivId:'+fillDivId);
 
             //fill page content to target div
-            $("#"+fillDivId).html(page);
+            if(isAppend == true) {
+                $("#"+fillDivId).append(page);
+            }else{
+                $("#"+fillDivId).html(page);
+            }
 
             //check and call cb func
-            if(typeof(cbFunc) != "undefined" && cbFunc != null) {
+            if(page != "" && typeof(cbFunc) != "undefined" && cbFunc != null) {
                 cbFunc();
             }
         },

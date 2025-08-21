@@ -17,6 +17,7 @@ import (
 type PageEntry struct {
 	//sub face
 	home *HomeEntry
+	list *ListEntry
 	post *PostEntry
 
 	//base
@@ -29,6 +30,7 @@ type PageEntry struct {
 func NewPageEntry() *PageEntry {
 	this := &PageEntry{
 		home: NewHomeEntry(),
+		list: NewListEntry(),
 		post: NewPostEntry(),
 
 		tpl: base.NewTplFace(),
@@ -73,5 +75,6 @@ func (f *PageEntry) Entry(
 func (f *PageEntry) interInit() {
 	//bind sub faces
 	f.faces.Bind(wDefine.SubFaceOfHome, f.home)
+	f.faces.Bind(wDefine.SubFaceOfList, f.list)
 	f.faces.Bind(wDefine.SubFaceOfPost, f.post)
 }

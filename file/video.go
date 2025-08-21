@@ -110,16 +110,27 @@ func (f *Video) GenAnimateGif(
 	)
 
 	//basic check
-	if videoFilePath == "" || metaJson == nil ||
-		startSecond < 0 || endSecond > metaJson.Duration {
+	if videoFilePath == "" || metaJson == nil{
 		return nil, errors.New("invalid parameter")
+	}
+	if startSecond <= 0 {
+		startSecond = define.DefaultStartSecond
+	}
+
+	//get config
+	mainConf := conf.RunAppConfig.GetMainConf().GetConfInfo()
+	animateSecondsConf := mainConf.AnimateSeconds
+
+	if metaJson.Duration - startSecond < animateSecondsConf {
+		endSecond = metaJson.Duration
+	}else{
+		endSecond = startSecond + animateSecondsConf
 	}
 
 	//get current timestamp
 	now := time.Now().Unix()
 
 	//get relate conf
-	mainConf := conf.RunAppConfig.GetMainConf().GetConfInfo()
 	cmdPath := mainConf.CommandPath
 	privatePath := mainConf.PrivatePath
 	tempPath := mainConf.TempPath
@@ -229,7 +240,7 @@ func (f *Video) GetMetaInfo(
 	}else{
 		duration, _ = strconv.ParseFloat(tempSlice[2], 64)
 	}
-	durationInt := int(math.Ceil(duration))
+	durationInt := int(math.Floor(duration))
 
 	//init meta json
 	metaJson := json.NewVideoMetaJson()

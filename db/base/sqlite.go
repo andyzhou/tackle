@@ -3,9 +3,9 @@ package base
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
+	"strconv"
 )
 
 /*
@@ -81,14 +81,14 @@ func (s *SqlLite) Execute(
 //query
 func (s *SqlLite) Query(
 	sql string,
-	args []interface{}) ([]map[string]string, error) {
+	args []interface{}) ([]map[string]interface{}, error) {
 	var (
+		integerVal int
 		colSize, i int
 		err error
-		tempStr string
+		//tempStr string
 		tempSlice = make([]interface{}, 0)
-
-		results = make([]map[string]string, 0)
+		results = make([]map[string]interface{}, 0)
 	)
 	if sql == "" || s.db == nil {
 		return nil, errors.New("invalid parameter")
@@ -114,16 +114,26 @@ func (s *SqlLite) Query(
 		//process single row record
 		err = rows.Scan(tempSlice...)
 		i = 0
-		tempMap := make(map[string]string)
+		tempMap := make(map[string]interface{})
 		for _, col := range cols {
-			tempStr = ""
+			//tempStr = ""
 			switch v := tempSlice[i].(type) {
 			case *[]uint8:
-				tempStr = fmt.Sprintf("%s", string(*v))
+				{
+					//check integer or string
+					integerVal, err = strconv.Atoi(string(*v))
+					if err == nil {
+						//integer success
+						tempMap[col] = integerVal
+					}else{
+						//string value
+						tempMap[col] = string(*v)
+					}
+				}
 			default:
-				tempStr = fmt.Sprintf("%v", v)
+				tempMap[col] = v
 			}
-			tempMap[col] = tempStr
+			//tempMap[col] = tempSlice[i]
 			i++
 		}
 		results = append(results, tempMap)

@@ -1,5 +1,4 @@
 <style>
-    body { font-family: Arial; padding: 20px; }
     video { display: block; margin-top: 15px; }
     #videoContainer {
         width: 480px;
@@ -7,7 +6,8 @@
     .slider { width: 100%; margin: 10px 0; }
 </style>
 
-<h2>视频转GIF工具 Demo</h2>
+<div class="video2gifPostForm">
+<h2>视频转GIF</h2>
 
 <!--post form-->
 <form enctype="multipart/form-data" method="post">
@@ -23,16 +23,17 @@
     </p>
     <div>
         <label>开始时间: <span id="startTime">0</span>s</label><br>
-        <input type="range" id="startSlider" class="slider" min="0" value="0">
+        <input type="range" id="startSlider" class="slider" min="0" value="0" disabled>
     </div>
     <div>
         <label>结束时间: <span id="endTime">0</span>s</label><br>
-        <input type="range" id="endSlider" class="slider" min="0" value="0">
+        <input type="range" id="endSlider" class="slider" min="0" value="0" disabled>
     </div>
 </div>
 
 <button type="button" id="submitBtn">确认选择片段</button>
 </form>
+</div>
 
 <script>
     let videoElement = $("#preview")[0];
@@ -43,6 +44,10 @@
 
     //ready
     $(function() {
+      //disabled start and end slider
+      $("#startSlider, #endSlider").prop("disabled", true);
+      $("#submitBtn").prop("disabled", true);
+
       //upload file click opt
       $("#uploadFile").click(function() {
         //$("#uploadFile").val("视频文件");
@@ -61,6 +66,11 @@
             videoElement.onloadedmetadata = function() {
                 duration = videoElement.duration;
                 $("#duration").text("视频时长: " + duration.toFixed(2) + " 秒");
+
+
+                // 启用滑块
+                $("#startSlider, #endSlider").prop("disabled", false);
+                $("#submitBtn").prop("disabled", false);
 
                 $("#startSlider, #endSlider").attr("max", Math.floor(duration));
                 $("#startSlider").val(0);
@@ -97,12 +107,22 @@
     // 结束滑块
     $("#endSlider").on("input", function() {
         end = parseInt($(this).val());
-        $("#endTime").text(end);
-        if (end <= start) {
-            start = end - 1;
+        // 如果结束 <= 开始，强制修正
+        if (end - maxSeconds <= start) {
+            start = end - maxSeconds >= maxSeconds ? end - maxSeconds : 0;
             $("#startSlider").val(start);
             $("#startTime").text(start);
         }
+
+        // 如果超过最大时长，往前推 start
+        if (end - start > maxSeconds) {
+            start = end - maxSeconds;
+            $("#startSlider").val(start);
+            $("#startTime").text(start);
+        }
+
+        $("#endTime").text(end);
+        videoElement.currentTime = start;
     });
 
     // 播放控制：只播放选定区间
@@ -123,7 +143,8 @@
 
         let length = end - start;
         if (length > maxSeconds) {
-            alert(`片段超过 `+maxSeconds+` 秒，将自动裁剪为 `+maxSeconds+` 秒以内`);
+            floatTipMessage(`片段超过 `+maxSeconds+` 秒，将自动裁剪为 `
+                +maxSeconds+` 秒以内`, "info");
             end = start + maxSeconds;
         }
         //alert("选择的片段: " + start + "s ~ " + end + "s (时长: " + (end - start) + "s)");

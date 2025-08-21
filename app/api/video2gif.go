@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 	"github.com/andyzhou/tackle/app/base"
 	aDefine "github.com/andyzhou/tackle/app/define"
@@ -27,14 +28,16 @@ func NewVideo2Gif() *Video2Gif {
 
 //entry
 //return jsonObj, errCode, error
-func (f *Video2Gif) Entry(ctx *gin.Context) (interface{}, int, error) {
+func (f *Video2Gif) Entry(
+	cookieUserId int64,
+	ctx *gin.Context) (interface{}, int, error) {
 	//get sub action
 	subAct := ctx.Param(define.ParaOfSubAct)
 	switch subAct {
 	case aDefine.SubActOfUpload:
 		{
 			//upload video
-			return f.uploadVideo(ctx)
+			return f.uploadVideo(cookieUserId, ctx)
 			break
 		}
 	default:
@@ -48,13 +51,19 @@ func (f *Video2Gif) Entry(ctx *gin.Context) (interface{}, int, error) {
 
 //upload video
 //return jsonObj, errCode, error
-func (f *Video2Gif) uploadVideo(ctx *gin.Context) (interface{}, int, error) {
+func (f *Video2Gif) uploadVideo(
+	cookieUserId int64,
+	ctx *gin.Context) (interface{}, int, error) {
 	var (
 		reqForm form.Video2GifUploadForm
 		ajaxResp interface{}
 		errCode int
 		err error
 	)
+	//check
+	if cookieUserId <= 0 {
+		return nil, define.CodeNoAccess, errors.New("user not login")
+	}
 
 	//get form para
 	err = ctx.ShouldBind(&reqForm)
@@ -67,7 +76,7 @@ func (f *Video2Gif) uploadVideo(ctx *gin.Context) (interface{}, int, error) {
 	//get form key para
 	fileId := reqForm.FileId
 	startTime := reqForm.StartTime
-	if fileId == "" || startTime <= 0 {
+	if fileId == "" || startTime < 0 {
 		//failed
 		code := define.CodeInvalidParam
 		return nil, code, err
@@ -85,6 +94,7 @@ func (f *Video2Gif) uploadVideo(ctx *gin.Context) (interface{}, int, error) {
 	ajaxResp, errCode, err = file.GetInterFile().
 								GetVideo2GifFile().
 								UploadOriginFile(
+									cookieUserId,
 									fileJson,
 									fileReader,
 									reqForm.StartTime)

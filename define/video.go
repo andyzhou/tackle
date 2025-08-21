@@ -7,6 +7,7 @@ const (
 )
 
 const (
+	DefaultStartSecond   = 1
 	ScaleMorePercent     = 0.3
 	AnimateGifMaxSeconds = 10
 )

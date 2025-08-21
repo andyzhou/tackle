@@ -8,10 +8,7 @@
 
 <!-- preload ico and logo -->
 <link rel="preload" as="image" href="/html/favicon.ico" type="image/x-icon">
-<link rel="preload" as="image" href="/html/image/logo.png" type="image/png">
-
-<!--<link rel="prefetch" as="image" href="/html/image/snake/logo.png" type="image/png">-->
-<!--<link rel="prefetch" as="image" href="/html/image/brawl/logo.png" type="image/png">-->
+<link rel="preload" as="image" href="/html/image/logo-new.png" type="image/png">
 
 <!-- basic css-->
 <link rel="stylesheet" href="/html/css/global.css?ver=1.0" type="text/css" />
@@ -22,7 +19,8 @@
 <script src="/html/js/base/jquery.min.js"></script>
 
 <!-- defer load other 3rd js -->
-<script src="/html/js/magnific/jquery.magnific-popup.min.js"></script>
+<script src="/html/js/base/macy.min.js"></script>
+<script async type="text/javascript" src="/html/js/magnific/jquery.magnific-popup.min.js"></script>
 <script async type="text/javascript" src="/html/js/tips/message.min.js" ></script>
 
 <!-- defer load app relate js -->
@@ -30,6 +28,9 @@
 <script defer type="text/javascript" src="/html/js/app/popup.js?ver=1.0" ></script>
 
 </head>
-<p>
-<img src="/html/image/logo.png">
-</p>
+
+<!-- //dynamic load app header -->
+{{if eq .DefaultApp "video2gif"}}
+    <!-- video2gif header -->
+    {{template "video2gif_header.html" .}}
+{{end}}

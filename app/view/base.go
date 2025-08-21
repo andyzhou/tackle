@@ -11,5 +11,7 @@ type BaseView struct {
 	CookiePlayerId   int64  `json:"CookiePlayerId"`
 	BrowserOrgUri    string `json:"BrowserOrgUri"`
 	NotifyAddr       string `json:"NotifyAddr"`
+	DefaultApp       string `json:"DefaultApp"`
+	NoData 			 bool   `json:"NoData"`
 	util.BaseJson
 }

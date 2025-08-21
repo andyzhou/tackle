@@ -49,6 +49,7 @@ func (f *Video2Gif) Quit() {
 //upload origin file
 //ajaxResp, errCode, error
 func (f *Video2Gif) UploadOriginFile(
+	userId int64,
 	info *json.FileJson,
 	file multipart.File,
 	startTime int) (interface{}, int, error) {
@@ -116,7 +117,7 @@ func (f *Video2Gif) UploadOriginFile(
 
 	//check db
 	video2GifDB := db.GetInterDB().GetVideo2GifDB()
-	fileInfo, _ := video2GifDB.GetFileByMd5(md5)
+	fileInfo, _ := video2GifDB.GetFileByMd5(userId, md5)
 	if fileInfo != nil {
 		//already exists, return old data
 		errCode = define.CodeSuccess
@@ -129,6 +130,7 @@ func (f *Video2Gif) UploadOriginFile(
 	//format video2gif json obj
 	gifObj := json.NewVideo2GifFileJson()
 	gifObj.ShortUrl = uniqueShortUrl
+	gifObj.UserId = userId
 	gifObj.Md5 = md5
 	gifObj.Snap = snapShortUrl
 	gifObj.Gif = gifShortUrl
