@@ -1,0 +1,158 @@
+<style>
+    video { display: block; margin-top: 15px; }
+    #videoContainer { width: 480px; }
+    .slider { width: 100%; margin: 10px 0; }
+</style>
+
+<div class="genCenterRow">
+  <div class="genRow">
+    <h2>视频片段截取（带音频）</h2>
+  </div>
+<form enctype="multipart/form-data" method="post">
+  <div class="genRow">
+    <input type="button" class="fileUploader" id="uploadFile" value="选择视频文件"/>
+    <input type="file" name="upload" id="upload" accept="video/mp4,video/quicktime,video/x-m4v,video/*" style="display:none;" />
+
+    <div id="videoContainer">
+        <video id="preview" width="480px" controls></video>
+        <p id="duration">视频时长: 0 秒</p>
+
+        <div>
+            <label>开始时间: <span id="startTime">0</span>s</label><br>
+            <input type="range" id="startSlider" class="slider" min="0" value="0" disabled>
+        </div>
+        <div>
+            <label>结束时间: <span id="endTime">0</span>s</label><br>
+            <input type="range" id="endSlider" class="slider" min="0" value="0" disabled>
+        </div>
+    </div>
+
+    <button type="button" id="submitBtn" disabled>确认截取并上传</button>
+  </div>
+</form>
+
+  <h3>截取结果预览:</h3>
+  <video id="clipPreview" controls width="320"></video>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+let videoElement = $("#preview")[0];
+let clipPreview = $("#clipPreview")[0];
+let duration = 0;
+let start = 0;
+let end = 0;
+let maxSeconds = 10;
+const uploadUrl = 'http://localhost:8090/api/video2gif/upload'; // 你的服务器接口
+
+$(function() {
+  $("#startSlider, #endSlider").prop("disabled", true);
+  $("#submitBtn").prop("disabled", true);
+
+  $("#uploadFile").click(() => $("#upload").click());
+
+  $("#upload").on("change", function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const url = URL.createObjectURL(file);
+    $("#preview").attr("src", url);
+
+    videoElement.onloadedmetadata = function() {
+      duration = videoElement.duration;
+      $("#duration").text("视频时长: " + duration.toFixed(2) + " 秒");
+
+      $("#startSlider, #endSlider").prop("disabled", false);
+      $("#submitBtn").prop("disabled", false);
+
+      $("#startSlider, #endSlider").attr("max", Math.floor(duration));
+      $("#startSlider").val(0);
+      $("#endSlider").val(Math.floor(duration));
+      $("#startTime").text(0);
+      $("#endTime").text(Math.floor(duration));
+
+      start = 0;
+      end = Math.floor(duration);
+    };
+  });
+
+  $("#startSlider").on("input", function() {
+    start = parseInt($(this).val());
+    if (start + maxSeconds <= duration) end = start + maxSeconds;
+    else end = duration;
+
+    $("#startTime").text(start);
+    $("#endTime").text(end);
+    $("#endSlider").val(end);
+
+    videoElement.currentTime = start;
+  });
+
+  $("#endSlider").on("input", function() {
+    end = parseInt($(this).val());
+    if (end - start > maxSeconds) start = end - maxSeconds;
+    if (start < 0) start = 0;
+
+    $("#startSlider").val(start);
+    $("#startTime").text(start);
+    $("#endTime").text(end);
+
+    videoElement.currentTime = start;
+  });
+
+  videoElement.addEventListener("timeupdate", function() {
+    if (videoElement.currentTime < start) videoElement.currentTime = start;
+    if (videoElement.currentTime >= end) {
+      videoElement.pause();
+      videoElement.currentTime = start;
+    }
+  });
+
+  $("#submitBtn").on("click", function(e) {
+    e.preventDefault();
+    captureAndUploadClip(videoElement, start, end, clipPreview);
+  });
+});
+
+function captureAndUploadClip(videoEl, startTime, endTime, previewEl) {
+    // 先让视频跳到起点
+    videoEl.currentTime = startTime;
+
+    // 确保视频播放开始
+    videoEl.play().then(() => {
+        // 获取视频+音频流
+        const stream = videoEl.captureStream(30);
+        const recorder = new MediaRecorder(stream, { mimeType: "video/webm" });
+        const chunks = [];
+
+        recorder.ondataavailable = e => chunks.push(e.data);
+        recorder.onstop = () => {
+            const blob = new Blob(chunks, { type: "video/webm" });
+            previewEl.src = URL.createObjectURL(blob);
+
+            // 上传到服务器
+            const formData = new FormData();
+            formData.append('file', blob, 'clip.webm');
+            formData.append('startTime', startTime);
+            formData.append('endTime', endTime);
+
+            fetch(uploadUrl, { method: 'POST', body: formData })
+              .then(res => res.json())
+              .then(data => alert('视频片段上传成功!'))
+              .catch(err => { alert('上传失败'); console.log(err); });
+        };
+
+        recorder.start();
+
+        // 停止录制时机
+        const duration = (endTime - startTime) * 1000; // ms
+        setTimeout(() => {
+            recorder.stop();
+            videoEl.pause();
+        }, duration);
+    }).catch(err => {
+        console.error("视频播放失败，无法捕获音频:", err);
+    });
+}
+
+</script>

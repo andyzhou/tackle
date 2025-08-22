@@ -8,4 +8,5 @@ const (
 //sub act
 const (
 	SubActOfUpload = "upload"
+	SubActOfDelete = "delete"
 )

@@ -123,7 +123,7 @@ func (f *Video2Gif) GetFile(
 	userId int64,
 	shortUrl string) (*json.Video2GifFileJson, error) {
 	//check
-	if shortUrl == "" {
+	if userId <= 0 || shortUrl == "" {
 		return nil, errors.New("invalid parameter")
 	}
 
@@ -170,6 +170,27 @@ func (f *Video2Gif) GetFileByMd5(
 	//process single record
 	fileObj := f.analyzeOneFileInfo(records[0])
 	return fileObj, nil
+}
+
+//delete file by short url
+func (f *Video2Gif) DelFile(
+	userId int64,
+	shortUrl string) error {
+	//check
+	if userId <= 0 || shortUrl == "" {
+		return errors.New("invalid parameter")
+	}
+
+	//format sql
+	sql := fmt.Sprintf("DELETE FROM %v WHERE userId = ? AND shortUrl = ?", define.TabNameOfVideo2GifFiles)
+	values := []interface{}{
+		userId,
+		shortUrl,
+	}
+
+	//remove from db
+	_, _, err := f.db.Execute(sql, values)
+	return err
 }
 
 //add new file

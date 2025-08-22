@@ -222,7 +222,6 @@ func (f *Video2Gif) saveOriginVideoFile(
 		return "", err
 	}
 
-	//copy file content
 	_, err = io.Copy(dstFile, file)
 	if err != nil {
 		return "", err

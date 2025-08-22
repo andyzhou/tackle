@@ -9,6 +9,7 @@ var video2gifListUrl = video2gifReqUrl + "/list";
 var video2gifApiUrl = "/api/video2gif";
 var video2gifApiUpload = video2gifApiUrl + "/upload";
 var video2gifApiDownload = video2gifApiUrl + "/download";
+var video2gifApiDelete = video2gifApiUrl + "/delete";
 
 var video2gifListPage = 1;
 var video2gifListMoreDiv = true;
@@ -164,23 +165,63 @@ function setLoadedVideo2Gif() {
       //console.log('点击了按钮：', action);
       console.log('opt', opt);
 
-      // 根据按钮执行操作，例如：
-      if(opt == "download") {
-        //download gif file
-        downloadFile(`/file/video2gif/`+shortUrl+`?uri=`+gifUrl+`&download=true`);
-        //window.open(`/file/video2gif/`+shortUrl+`?uri=`+gifUrl+`&download=true`, "_blank");
+      // 根据按钮执行操作
+      switch(opt){
+      case 'download':
+        {
+            //download gif file
+            downloadFile(`/file/video2gif/`+shortUrl+`?uri=`+gifUrl+`&download=true`);
+            break;
+        }
+    case 'delete':
+        {
+            //delete gif file
+            deleteVideo2Gif(shortUrl);
+            break;
+        }
       }
-      // if(action === '操作1') {
-      //   alert('执行操作1逻辑');
-      // } else if(action === '操作2') {
-      //   alert('执行操作2逻辑');
-      // }
     });
 }
 
-//like gif
+//delete gif file
+function deleteVideo2Gif(shortUrl) {
+    //check
+    if(typeof(shortUrl) == "undefined" || shortUrl == "") {
+        return;
+    }
 
-//download gif
+    //set ext para for cb func
+    var extCbPara = {};
+    extCbPara["shortUrl"] = shortUrl;
+
+    //send ajax request
+    var data = {
+        'uri':shortUrl,
+    }
+    sendAjaxReqWithCB(video2gifApiDelete, data, cbForDeleteVideoGif, extCbPara);
+}
+
+//cb for delete video gif
+function cbForDeleteVideoGif(dataVal, paraMap, errCode, errMsg) {
+   if(errCode != errCodeOfSucceed) {
+        //message tip
+        floatTipMessage("删除失败,"+errMsg, "error");
+        return;
+    }
+
+    //float tips
+    floatTipMessage("删除成功", "success");
+
+    //remove deleted gif file
+    var shortUrl = paraMap["shortUrl"];
+    var gridDiv = `grid_` + shortUrl;
+    $(`#`+gridDiv).remove();
+
+    //trigger macy image flows
+    if(typeof(macyInstance) != "undefined" && macyInstance != null) {
+        macyInstance.recalculate(true);
+    }
+}
 
 //load more gif files
 function loadMoreVideo2Gif(targetDivId, resetPage) {

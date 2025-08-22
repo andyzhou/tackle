@@ -6,6 +6,7 @@ import (
 	"github.com/andyzhou/tackle/app/base"
 	aDefine "github.com/andyzhou/tackle/app/define"
 	"github.com/andyzhou/tackle/app/form"
+	"github.com/andyzhou/tackle/db"
 	"github.com/andyzhou/tackle/define"
 	"github.com/andyzhou/tackle/file"
 	"github.com/gin-gonic/gin"
@@ -40,6 +41,12 @@ func (f *Video2Gif) Entry(
 			return f.uploadVideo(cookieUserId, ctx)
 			break
 		}
+	case aDefine.SubActOfDelete:
+		{
+			//delete gif
+			return f.deleteGif(cookieUserId, ctx)
+			break
+		}
 	default:
 		{
 			//default
@@ -47,6 +54,60 @@ func (f *Video2Gif) Entry(
 		}
 	}
 	return nil, 0, nil
+}
+
+//delete gif
+//return jsonObj, errCode, error
+func (f *Video2Gif) deleteGif(
+	cookieUserId int64,
+	ctx *gin.Context) (interface{}, int, error) {
+	var (
+		reqForm form.Video2GifDeleteForm
+		err error
+	)
+	//check
+	if cookieUserId <= 0 {
+		return nil, define.CodeNoAccess, errors.New("user not login")
+	}
+
+	//get form para
+	err = ctx.ShouldBind(&reqForm)
+	if err != nil {
+		//failed
+		code := define.CodeInterError
+		return nil, code, err
+	}
+
+	//get form key para
+	dataUri := reqForm.Uri
+	if dataUri == "" {
+		//failed
+		code := define.CodeInvalidParam
+		return nil, code, errors.New("invalid parameter")
+	}
+
+	//get origin file info
+	video2GifDB := db.GetInterDB().GetVideo2GifDB()
+	fileInfo, subErr := video2GifDB.GetFile(cookieUserId, dataUri)
+	if subErr != nil || fileInfo == nil {
+		code := define.CodeNoSuchData
+		return nil, code, subErr
+	}
+
+	//delete from db
+	err = video2GifDB.DelFile(cookieUserId, dataUri)
+	if err != nil {
+		code := define.CodeInterError
+		return nil, code, err
+	}
+	snapUrl := fileInfo.Snap
+	gifUrl := fileInfo.Gif
+
+	//remove from pond
+	video2GifFile := file.GetInterFile().GetVideo2GifFile()
+	err = video2GifFile.DelFile(snapUrl)
+	err = video2GifFile.DelFile(gifUrl)
+	return nil, define.CodeSuccess, nil
 }
 
 //upload video

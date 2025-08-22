@@ -5,3 +5,7 @@ type Video2GifUploadForm struct {
 	StartTime int    `form:"startTime"`
 	Tag       string `form:"tag"`
 }
+
+type Video2GifDeleteForm struct {
+	Uri string `form:"uri"`
+}

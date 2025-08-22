@@ -95,6 +95,12 @@ function getStrLen(input) {
     return new TextEncoder().encode(input).length;
 }
 
+//scroll to top
+function scrollToTop() {
+  $(window).scrollTop(0);
+}
+
+
 //sub page url jump
 function pageJump(pageUrl) {
     //check
