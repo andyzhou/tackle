@@ -15,12 +15,12 @@
  <div class="genRow">
    <div class="centerDiv">
 	 
-  <div class="textRectOfGray">
+   <div class="textRectOfGray">
    <!-- icp info -->
     京ICP备20017190号-2
     <a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=11010602201357">
     <span style="display:inline-block;text-decoration:none;">京公网安备11010602201357号</span></a>
-  </div>
+   </div>
 
    </div>
   </div>
@@ -47,10 +47,6 @@ $(function(){
     var href = window.location.href;
     console.log("popstate, href:"+href);
     if(typeof(href) != "undefined" && href != "") {
-      //check and force close websocket
-      forceCloseSnake();
-      //forceCloseBrawl();
-      
       //send ajax page load
       pageJump(href);
     }

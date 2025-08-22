@@ -158,6 +158,9 @@ func (f *BaseEntry) CheckOrInitUser(
 			//for video2gif
 			video2gifDB := db.GetInterDB().GetVideo2GifDB()
 			userId, err = video2gifDB.AddNewUser(f.GetClientIp(ctx))
+			if err != nil {
+				log.Printf("CheckOrInitUser, newuserId:%v, err:%v\n", userId, err)
+			}
 			break
 		}
 	}

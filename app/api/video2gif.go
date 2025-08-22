@@ -79,7 +79,7 @@ func (f *Video2Gif) uploadVideo(
 	if fileId == "" || startTime < 0 {
 		//failed
 		code := define.CodeInvalidParam
-		return nil, code, err
+		return nil, code, errors.New("invalid parameter")
 	}
 
 	//read uploaded file

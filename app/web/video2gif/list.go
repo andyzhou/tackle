@@ -50,7 +50,7 @@ func (f *ListEntry) Entry(
 
 	//get batch file info
 	video2gifDB := db.GetInterDB().GetVideo2GifDB()
-	filesJson, _ := video2gifDB.GetFiles(userId, pageInt, define.RecSmallPage)
+	filesJson, _ := video2gifDB.GetFiles(userId, pageInt, define.RecPerPage)
 
 	pageView.FilesInfo = make([]*json.Video2GifFileJson, 0)
 	if filesJson != nil {

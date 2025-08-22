@@ -7,6 +7,7 @@ import (
 	aDefine "github.com/andyzhou/tackle/app/define"
 	"github.com/andyzhou/tackle/define"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -88,6 +89,7 @@ func (f *InterApiEntry) Entry(ctx *gin.Context) {
 	//output ajax result
 	if err != nil {
 		//failed
+		log.Printf("api error:%v\n", err.Error())
 		ajaxResp = f.AjaxResp(nil, errCode, err.Error())
 	}else{
 		//succeed

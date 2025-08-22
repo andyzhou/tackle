@@ -3,7 +3,7 @@ package base
 import (
 	"database/sql"
 	"errors"
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/mattn/go-sqlite3" //need CGO enabled
 	"log"
 	"strconv"
 )

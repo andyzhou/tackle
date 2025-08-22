@@ -2,8 +2,6 @@ cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMT
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/RoaringBitmap/roaring v1.2.3 h1:yqreLINqIrX22ErkKI0vY47/ivtJr6n+kMhVOVmhWBY=
 github.com/RoaringBitmap/roaring v1.2.3/go.mod h1:plvDsJQpxOC5bw8LRteu/MLWHsHez/3y6cubLI4/1yE=
-github.com/andyzhou/pond v0.0.0-20250526063720-a746b5b2b5d0 h1:nJLHy3Ba3wcFwkvwBi/MlAzByTpxPUNoy9+9WueZctY=
-github.com/andyzhou/pond v0.0.0-20250526063720-a746b5b2b5d0/go.mod h1:OirRUgZxA/DiLrSxqcDEloe/pxuZLd3IDFNDJVN7M5Y=
 github.com/andyzhou/pond v0.0.0-20250820093115-93f7d07c14e5 h1:MAxAEDdMXDaf/kK/Reu9YzOonQW4T5SIuEF4FCEJAI8=
 github.com/andyzhou/pond v0.0.0-20250820093115-93f7d07c14e5/go.mod h1:CZw3RSDabWVy5LJejh1XRttBwdHJnxAUZBi2urnZM3A=
 github.com/andyzhou/tinylib v0.0.0-20250404094403-69a7a2941678 h1:3DICBFf49/XB3QdRibiIm+hXzlG4rs7BDM8Y+2t+hQ0=
@@ -51,7 +49,6 @@ github.com/bytedance/sonic/loader v0.1.1/go.mod h1:ncP89zfokxS5LZrJxl5z0UJcsk4M4
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/cespare/xxhash/v2 v2.1.2 h1:YRXhKfTDauu4ajMg1TPgFO5jnlC2HCbmLXMcTG5cbYE=
 github.com/cespare/xxhash/v2 v2.1.2/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
-github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311/go.mod h1:b583jCggY9gE99b6G5LEC39OIiVsWj+R97kbl5odCEk=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
 github.com/cloudwego/base64x v0.1.4 h1:jwCgWpFanWmN8xoIUHa2rtzmkd5J2plF/dnLS6Xd/0Y=
 github.com/cloudwego/base64x v0.1.4/go.mod h1:0zlkT4Wn5C6NdauXdJRhSKRlJvmclQ1hhJgA0rcu/8w=
