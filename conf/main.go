@@ -27,7 +27,7 @@ type mainConfInfo struct {
 	DefaultApp     string   `json:"defaultApp"`
 }
 type MainConf struct {
-	confInfo *mainConfInfo
+	mainConf *mainConfInfo
 	sync.RWMutex
 }
 
@@ -35,7 +35,7 @@ type MainConf struct {
 func NewMainConf() *MainConf {
 	//self init
 	this := &MainConf{
-		confInfo: newMainConfInfo(),
+		mainConf: newMainConfInfo(),
 	}
 	return this
 }
@@ -47,9 +47,9 @@ func newMainConfInfo() *mainConfInfo {
 	return this
 }
 
-//get config info
+//get main config info
 func (c *MainConf) GetConfInfo() *mainConfInfo {
-	return c.confInfo
+	return c.mainConf
 }
 
 //analyze config
@@ -68,6 +68,6 @@ func (c *MainConf) AnalyzeConf(config interface{}) bool {
 
 	//json encode and decode
 	confBytes, _ := json.Marshal(configMap)
-	json.Unmarshal(confBytes, &c.confInfo)
+	json.Unmarshal(confBytes, &c.mainConf)
 	return true
 }

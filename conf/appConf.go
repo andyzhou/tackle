@@ -22,12 +22,14 @@ var (
 //sub config sections info
 type SubConfSections struct {
 	mainConf      *MainConf
+	video2gifConf *Video2gifConf
 }
 
 //app config info
 type AppConfig struct {
 	//base
 	subConfOfMain  *config.SubConfig
+	subConfOfVideo2gif *config.SubConfig
 
 	confDir string
 	subConf *SubConfSections
@@ -45,13 +47,16 @@ func NewAppConfig(confDir string) *AppConfig {
 	//init sub config section instance
 	this.subConf = &SubConfSections{
 		mainConf:NewMainConf(),
+		video2gifConf: NewVideo2gifConf(),
 	}
 
 	//get relate config file path
-	mainConfigFile := fmt.Sprintf("%s/%s", confDir, define.ConfMain)
+	mainConfigFile := fmt.Sprintf("%s/%s", confDir, define.ConfOfMain)
+	video2gifConfigFile := fmt.Sprintf("%s/%s", confDir, define.ConfOfVideo2Gif)
 
 	//init sub config files
 	this.subConfOfMain = config.NewSubConfig(mainConfigFile, this.CBForMain, CheckConfRate)
+	this.subConfOfVideo2gif = config.NewSubConfig(video2gifConfigFile, this.CBForVideo2gif, CheckConfRate)
 
 	return this
 }
@@ -82,13 +87,28 @@ func (c *AppConfig) GetMainConf() *MainConf {
 	return c.subConf.mainConf
 }
 
+//get video2gif config
+func (c *AppConfig) GetVideo2gifConf() *Video2gifConf {
+	return c.subConf.video2gifConf
+}
+
 //call back for main
 func (c *AppConfig) CBForMain(allConfMap map[string]interface{}) bool {
 	if allConfMap == nil || len(allConfMap) <= 0 {
-		log.Println("GameConfig::CBForMain, no any config info")
+		log.Println("AppConfig::CBForMain, no any config info")
 		return false
 	}
 	c.subConf.mainConf.AnalyzeConf(allConfMap)
+	return true
+}
+
+//call back for video2gif
+func (c *AppConfig) CBForVideo2gif(allConfMap map[string]interface{}) bool {
+	if allConfMap == nil || len(allConfMap) <= 0 {
+		log.Println("AppConfig::CBForVideo2gif, no any config info")
+		return false
+	}
+	c.subConf.video2gifConf.AnalyzeConf(allConfMap)
 	return true
 }
 

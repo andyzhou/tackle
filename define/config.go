@@ -2,6 +2,6 @@ package define
 
 //config file
 const (
-	ConfMain    = "main.conf"
-	ConfRedis   = "redis.conf"
+	ConfOfMain      = "main.conf"
+	ConfOfVideo2Gif = "video2gif.conf"
 )
