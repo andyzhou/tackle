@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/andyzhou/pond"
 	"github.com/andyzhou/tackle/conf"
-	"github.com/andyzhou/tackle/db"
+	"github.com/andyzhou/tackle/lib/db"
 	"github.com/andyzhou/tackle/define"
 	"github.com/andyzhou/tackle/json"
 	"github.com/andyzhou/tinylib/util"

@@ -6,9 +6,9 @@ import (
 	"github.com/andyzhou/tackle/app/base"
 	aDefine "github.com/andyzhou/tackle/app/define"
 	"github.com/andyzhou/tackle/app/form"
-	"github.com/andyzhou/tackle/db"
+	"github.com/andyzhou/tackle/lib/db"
 	"github.com/andyzhou/tackle/define"
-	"github.com/andyzhou/tackle/file"
+	"github.com/andyzhou/tackle/lib/file"
 	"github.com/gin-gonic/gin"
 )
 

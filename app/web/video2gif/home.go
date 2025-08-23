@@ -4,7 +4,7 @@ import (
 	"github.com/andyzhou/tackle/app/base"
 	wDefine "github.com/andyzhou/tackle/app/define"
 	"github.com/andyzhou/tackle/app/view"
-	"github.com/andyzhou/tackle/db"
+	"github.com/andyzhou/tackle/lib/db"
 	"github.com/andyzhou/tackle/define"
 	"github.com/gin-gonic/gin"
 	"log"

@@ -3,7 +3,7 @@ package file
 import (
 	"fmt"
 	"github.com/andyzhou/tackle/define"
-	"github.com/andyzhou/tackle/file"
+	"github.com/andyzhou/tackle/lib/file"
 	"github.com/andyzhou/tinylib/web"
 	"github.com/gin-gonic/gin"
 	"net/http"
