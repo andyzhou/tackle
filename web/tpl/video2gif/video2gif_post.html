@@ -1,25 +1,15 @@
-<style>
-    video { display: block; margin-top: 15px; }
-    #videoContainer {
-        width: 480px;
-    }
-    .slider { width: 100%; margin: 10px 0; }
-</style>
 
-<div class="genCenterRow">
-  <div class="genRow">
-    <h2>视频转GIF</h2>
-  </div>
 
   <!--post form-->
   <div class="genRow">
     <form enctype="multipart/form-data" method="post">
     <input type="button" class="fileUploader" id="uploadFile" name="uploadFile" value="选择视频文件"/>
+    <br/><br/>
     <input type="file" name="upload" id="upload" accept="video/mp4,video/quicktime,video/x-m4v,video/*" style="display:none;" />
 
-    <div id="videoContainer">
+    <div class="videoContainer">
         <!-- origin video -->
-        <video id="preview" width="480px" controls></video>
+        <video id="preview" class="fileReview" controls playsinline webkit-playsinline></video>
 
         <p id="duration">
             视频时长: 0 秒
@@ -34,10 +24,9 @@
         </div>
     </div>
 
-    <button type="button" id="submitBtn">确认选择片段</button>
+    <button type="button" class="genButton" id="submitBtn">确认选择片段</button>
     </form>
   </div>
-</div>
 
 <script>
     //set base property

@@ -11,124 +11,109 @@ var video2gifApiUpload = video2gifApiUrl + "/upload";
 var video2gifApiDownload = video2gifApiUrl + "/download";
 var video2gifApiDelete = video2gifApiUrl + "/delete";
 
+var viedo2gifMaxSeconds = 10;
 var video2gifListPage = 1;
 var video2gifListMoreDiv = true;
 
-//show video2gif upload form
-function showVideo2gifUploadForm(paraMap) {
-    //check
-    if(typeof(paraMap) == "undefined" || paraMap == null) {
-        return;
-    }
 
-    //get key data
+//show video2gif upload form page
+function showVideo2gifUploadForm(paraMap) {
+    if (!paraMap) return;
+
     var videoElement = paraMap["videoElement"];
     var duration = paraMap["duration"];
-    var start = paraMap["start"];
-    var end = paraMap["end"];
-    var maxSeconds = paraMap["maxSeconds"];
+    var start = paraMap["start"] || 0;
+    var end = paraMap["end"] || 0;
+    var maxSeconds = paraMap["maxSeconds"] || 10;
+
+    let isPlaying = false;
 
     // 上传并预览视频
     $("#upload").on("change", function(e) {
-        let file = e.target.files[0];
-        if (file) {
-            let url = URL.createObjectURL(file);
-            $("#preview").attr("src", url);
+        const file = e.target.files[0];
+        if (!file) return;
 
-            videoElement.onloadedmetadata = function() {
-                duration = videoElement.duration;
-                $("#duration").text("视频时长: " + duration.toFixed(2) + " 秒");
+        const preview = videoElement;
+        const url = URL.createObjectURL(file);
+        preview.src = url;
+        preview.load();
 
+        // 避免 iOS 全屏
+        preview.setAttribute('playsinline', '');
+        preview.setAttribute('webkit-playsinline', '');
 
-                // 启用滑块
-                $("#startSlider, #endSlider").prop("disabled", false);
-                $("#submitBtn").prop("disabled", false);
+        preview.onloadedmetadata = function() {
+            duration = preview.duration;
+            start = 0;
+            end = Math.floor(duration);
 
-                $("#startSlider, #endSlider").attr("max", Math.floor(duration));
-                $("#startSlider").val(0);
-                $("#endSlider").val(Math.floor(duration));
-                $("#startTime").text(0);
-                $("#endTime").text(Math.floor(duration));
-
-                start = 0;
-                end = Math.floor(duration);
-            };
-        }
+            $("#duration").text("视频时长: " + duration.toFixed(2) + " 秒");
+            $("#startSlider, #endSlider").prop("disabled", false)
+                .attr("max", Math.floor(duration));
+            $("#startSlider").val(0);
+            $("#endSlider").val(Math.floor(duration));
+            $("#startTime").text(0);
+            $("#endTime").text(Math.floor(duration));
+            $("#submitBtn").prop("disabled", false);
+        };
     });
 
-    // 开始滑块
+    // 播放状态监听
+    videoElement.addEventListener("play", () => {
+        isPlaying = true;
+        videoElement.currentTime = start; // 播放前跳到选区起点
+    });
+    videoElement.addEventListener("pause", () => { isPlaying = false; });
+
+    // 滑块拖动：只更新显示，不修改 video.currentTime
     $("#startSlider").on("input", function() {
         start = parseInt($(this).val());
+        if (start + maxSeconds <= duration) end = start + maxSeconds;
+        else end = duration;
+        if (end - start > maxSeconds) start = end - maxSeconds;
 
-        // 自动计算结束时间
-        if (start + maxSeconds <= duration) {
-            end = start + maxSeconds;
-        } else {
-            end = duration; // 视频末尾
-        }
-
-        // 更新滑块显示
         $("#startTime").text(start);
         $("#endTime").text(end);
+        $("#startSlider").val(start);
         $("#endSlider").val(end);
-
-        // 视频跳到起点
-        videoElement.currentTime = start;
     });
 
-    // 结束滑块
     $("#endSlider").on("input", function() {
         end = parseInt($(this).val());
-        // 如果结束 <= 开始，强制修正
-        if (end - maxSeconds <= start) {
-            start = end - maxSeconds >= maxSeconds ? end - maxSeconds : 0;
-            $("#startSlider").val(start);
-            $("#startTime").text(start);
-        }
+        if (end - maxSeconds <= start) start = Math.max(0, end - maxSeconds);
+        if (end - start > maxSeconds) start = end - maxSeconds;
 
-        // 如果超过最大时长，往前推 start
-        if (end - start > maxSeconds) {
-            start = end - maxSeconds;
-            $("#startSlider").val(start);
-            $("#startTime").text(start);
-        }
-
+        $("#startTime").text(start);
         $("#endTime").text(end);
+        $("#startSlider").val(start);
+        $("#endSlider").val(end);
+    });
+
+    // 滑块松开时同步 video.currentTime
+    $("#startSlider, #endSlider").on("change", function() {
         videoElement.currentTime = start;
     });
 
-    // 播放控制：只播放选定区间
+    // 播放控制：只播放选定片段
     videoElement.addEventListener("timeupdate", function() {
-        if (videoElement.currentTime < start) {
-            videoElement.currentTime = start;
-        }
-        if (videoElement.currentTime >= end) {
+        if (!isPlaying) return;
+        if (videoElement.currentTime > end - 0.05) { // 0.05s 缓冲
             videoElement.pause();
-            videoElement.currentTime = start; // 重置到开始时间
         }
     });
 
     // 点击提交
     $("#submitBtn").on("click", function(e) {
-        //阻止表单提交刷新
         e.preventDefault();
-
         let length = end - start;
-        if (length > maxSeconds) {
-            floatTipMessage(`片段超过 `+maxSeconds+` 秒，将自动裁剪为 `
-                +maxSeconds+` 秒以内`, "info");
-            end = start + maxSeconds;
-        }
-        //alert("选择的片段: " + start + "s ~ " + end + "s (时长: " + (end - start) + "s)");
+        if (length > maxSeconds) end = start + maxSeconds;
 
-        //setup para
         var paraMap = {
-            "fileId":"upload",
-            "startTime":start,
-            "submitBtn":"submitBtn",
+            fileId: "upload",
+            startTime: start,
+            submitBtn: "submitBtn"
         };
 
-        //save uploaded video
         video2gifUploadVideo(paraMap);
     });
 }

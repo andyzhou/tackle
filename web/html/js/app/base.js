@@ -21,42 +21,60 @@ var tipMessageTimeOut = 5000; //xx micro seconds
 
 
 //general download file
+// 通用下载文件函数（兼容 PC + iOS）
 async function downloadFile(url) {
-    try {
-        const response = await fetch(url, {
-            method: 'GET',
-            // 如果需要携带 Cookie，加入下面这一行
-            // credentials: 'include'
-        });
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      // 如果需要携带 Cookie，取消下面注释
+      // credentials: 'include'
+    });
 
-        if (!response.ok) throw new Error('下载失败');
+    if (!response.ok) throw new Error('下载失败');
 
-        // 获取文件名：尝试从 Content-Disposition 头获取
-        let filename = 'download';
-        const disposition = response.headers.get('Content-Disposition');
-        if (disposition && disposition.includes('filename=')) {
-            const match = disposition.match(/filename\*?=(?:UTF-8'')?["']?([^;"']+)/i);
-            if (match && match[1]) filename = decodeURIComponent(match[1]);
-        }
-
-        const blob = await response.blob();
-        const blobUrl = window.URL.createObjectURL(blob);
-
-        // 创建隐藏 a 标签触发下载
-        const a = document.createElement('a');
-        a.href = blobUrl;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-
-        // 释放 URL 对象
-        window.URL.revokeObjectURL(blobUrl);
-
-    } catch (err) {
-        console.error('下载失败:', err);
+    // 获取文件名
+    let filename = 'download';
+    const disposition = response.headers.get('Content-Disposition');
+    if (disposition && disposition.includes('filename=')) {
+      const match = disposition.match(/filename\*?=(?:UTF-8'')?["']?([^;"']+)/i);
+      if (match && match[1]) filename = decodeURIComponent(match[1]);
     }
+
+    const blob = await response.blob();
+
+    // iOS Safari / WebView 检测
+    const isIOS = /iP(ad|hone|od)/.test(navigator.userAgent);
+
+    if (isIOS) {
+      // 使用 FileReader 转 Data URL 打开新标签页
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const dataUrl = e.target.result;
+        const a = document.createElement('a');
+        a.href = dataUrl;
+        a.target = '_blank'; // iOS 打开新窗口
+        a.click();
+      };
+      reader.readAsDataURL(blob);
+    } else {
+      // PC 浏览器直接使用 Blob URL + download
+      const blobUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      // 延迟释放 URL，保证浏览器完成下载
+      setTimeout(() => window.URL.revokeObjectURL(blobUrl), 1000);
+    }
+
+  } catch (err) {
+    console.error('下载失败:', err);
+  }
 }
+
 
 
 //count down trigger

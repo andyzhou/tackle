@@ -24,8 +24,6 @@ html, body, canvas {
 
 .whole_div {
     width: 100%;
-    min-height:900px;
-    min-height: 100%;
     height: auto;
     clear: both;
     text-align:center;
@@ -34,12 +32,10 @@ html, body, canvas {
 }
 
 .genCenterRow {
-  width: 900px;
+  width: 90%;
   height: auto;
   margin: auto;
   padding: auto;
-  text-align: center;
-/*  background-color: yellow;*/
 }
 
 .genRow {
@@ -124,8 +120,8 @@ html, body, canvas {
 }
 
 .quickPost {
-    width: 200px;
-    padding:5px 0px 0px 100px;
+    width: 120px;
+    padding:5px 0px 0px 60px;
 }
 
 .loadMoreButton {
@@ -147,6 +143,16 @@ html, body, canvas {
 div.loadMoreButton:hover{
     color: white;
     background-color: #afafaf;
+}
+
+.textRectOfGray {
+    text-align: center;
+    font-size: 14px;
+    color: black;
+}
+.textRectOfGray a:link{
+  color: black;
+  text-decoration: none;
 }
 
 .bigBordRect {
@@ -171,6 +177,16 @@ div.bigBordRect:hover{
     background-color: #C1C1C1;
 }
 
+.genButton {
+    min-width: 130px;
+    width: auto;
+    height: 32px;
+    cursor: pointer;
+    padding: 3px 3px 3px 3px;
+    border: solid 1px #efefef;
+    border-radius: 20px;
+}
+
 
 .fileUploader {
     min-width: 130px;
@@ -180,6 +196,10 @@ div.bigBordRect:hover{
     padding: 3px 3px 3px 3px;
     border: solid 1px #efefef;
     border-radius: 20px;
+}
+
+.fileReview {
+    border: solid 1px #efefef;
 }
 
 /*瀑布式*/
@@ -257,10 +277,34 @@ div.bigBordRect:hover{
   font-size: 13px;
 }
 
-
 .video2gifPostForm {
   float: left;
   width: 100%;
   height: auto;
   margin: 10px 10px 10px 10px;
+}
+
+.videoContainer {
+  width: 90%;
+  overflow: auto;   /* 或 overflow-y: auto */
+  -webkit-overflow-scrolling: touch; /* iOS 滑动优化 */
+}
+
+.videoContainer video {
+  width: 99%;
+  margin-top: 15px;
+  max-height: 80vh;     /* 高度最多占 80% 的屏幕 */
+  object-fit: contain;  /* 保持比例，不裁剪 */
+  display: block;
+  margin: 0 auto;       /* 居中 */
+}
+
+.videoContainer button {
+    border: solid 1px #efefef;
+    border-radius: 20px;
+}
+
+.slider {
+  width: 100%;
+  margin: 10px 0;
 }
